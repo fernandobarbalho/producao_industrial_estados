@@ -7,6 +7,7 @@ date: "2024-08-13"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(tidyverse)
+library(colorspace)
 
 producao_fisica_estados <- readRDS("~/github/producao_industrial_estados/producao_fisica_estados.rds")
 
@@ -18,16 +19,19 @@ dados_grafico<-
   producao_fisica_estados %>%
   filter(estado %in% c("Rio Grande do Sul"),
          tipo_dado == "PIMPF - Variação mês/mês imediatamente anterior, com ajuste sazonal (M/M-1)") %>%
-  mutate(posicao = as.character(posicao))
+  mutate(posicao = as.character(posicao),
+         posicao = str_sub(posicao,1,7))
 
 vjust_grafico <- ifelse(dados_grafico$valor > 0 , -0.5, 1)
 
+dados_grafico$sinal<- dados_grafico$valor>0
 
 dados_grafico %>%
   ggplot(aes(x=posicao, y=valor)) +
-  geom_col() +
-  geom_text(aes(label = paste0(valor,"%")), vjust = vjust_grafico, size= 3) +
-  facet_wrap(estado~.) +
+  geom_col(aes(fill= sinal), show.legend = FALSE) +
+  geom_text(aes(label = paste0(valor,"%"), color  = sinal), vjust = vjust_grafico, size= 3, show.legend = FALSE) +
+  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-05", y=-26), hjust=1.1) +
+  scale_color_discrete_qualitative(palette = "Dark 3")+
   theme_light() +
   theme(
     panel.grid = element_blank(),
@@ -35,7 +39,9 @@ dados_grafico %>%
   ) +
   labs(x="",
        y="",
-       title = "Variação da produção industrial em relação ao mês anterior")
+       title = "Variação da produção industrial em relação ao mês anterior",
+       subtitle = "Estado: Rio Grande do Sul",
+       caption = "Fonte: IBGE. Elaboração própria")
 
 ```
 
