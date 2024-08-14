@@ -1,3 +1,5 @@
+library(tidyverse)
+
 producao_fisica_estados <- readRDS("~/github/producao_industrial_estados/producao_fisica_estados.rds")
 
 
@@ -28,7 +30,7 @@ producao_fisica_estados %>%
   filter(tipo_dado == "PIMPF - Variação mês/mesmo mês do ano anterior (M/M-12)",
          posicao == "2024-06-01") %>%
   arrange(desc(valor))%>%
-  writexl::write_xlsx("variacao_industria_estados_junho_2024_maio_2023.xlsx")
+  writexl::write_xlsx("variacao_industria_estados_junho_2024_junho_2023.xlsx")
 
 
 producao_fisica_estados %>%
