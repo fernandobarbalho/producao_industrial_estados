@@ -22,26 +22,51 @@ dados_grafico<-
   mutate(posicao = as.character(posicao),
          posicao = str_sub(posicao,1,7))
 
-vjust_grafico <- ifelse(dados_grafico$valor > 0 , -0.5, 1)
+vjust_grafico <- ifelse(dados_grafico$valor > 0 , -0.5, 1.5)
 
 dados_grafico$sinal<- dados_grafico$valor>0
 
+grafico_sem_gradacao_de_cores<-
 dados_grafico %>%
   ggplot(aes(x=posicao, y=valor)) +
   geom_col(aes(fill= sinal), show.legend = FALSE) +
   geom_text(aes(label = paste0(valor,"%"), color  = sinal), vjust = vjust_grafico, size= 3, show.legend = FALSE) +
-  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-05", y=-26), hjust=1.1) +
+  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-04", y=-26), hjust=1.1, color = "red") +
+  geom_text(aes(label = "Recuperação da indústria", x="2024-05", y=26), hjust=1.1, color = "blue") +
   scale_color_discrete_qualitative(palette = "Dark 3")+
   theme_light() +
   theme(
     panel.grid = element_blank(),
     axis.text.x = element_text(angle = 90)
   ) +
+   annotate(
+    "curve", 
+    x = "2024-05", y = -20, 
+    xend = "2024-02", yend = -24,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = 0.3,
+    color = "red"
+  ) + 
+   annotate(
+    "curve", 
+    x = "2024-06",  y = 15, 
+    xend = "2024-03", yend = 24 ,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = -0.3,
+    color = "blue"
+  ) + 
   labs(x="",
        y="",
        title = "Variação da produção industrial em relação ao mês anterior",
        subtitle = "Estado: Rio Grande do Sul",
-       caption = "Fonte: IBGE. Elaboração própria")
+       caption = "Fonte: IBGE. Elaboração: Vice-Presidência da República")
+
+
+grafico_sem_gradacao_de_cores
+
+ggsave("grafico_sem_gradacao_de_cores.pdf", plot = grafico_sem_gradacao_de_cores, device = "pdf", width = 10, height = 6, dpi = 300)
+ggsave("grafico_sem_gradacao_de_cores.png", plot = grafico_sem_gradacao_de_cores, device = "png", width = 10, height = 6, dpi = 300)
+
 
 ```
 
@@ -51,19 +76,81 @@ dados_grafico %>%
   ggplot(aes(x=posicao, y=valor)) +
   geom_col(aes(fill= sinal), show.legend = FALSE) +
   geom_text(aes(label = paste0(valor,"%"), color  = sinal), vjust = vjust_grafico, size= 3, show.legend = FALSE) +
-  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-05", y=-26), hjust=1.1, color = "white") +
+  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-05", y=-26), hjust=1.1, color = "red") +
+  geom_text(aes(label = "Recuperação da indústria", x="2024-06", y=26), hjust=1.1, color = "#00BFFF") +
   scale_color_discrete_qualitative(palette = "Dark 3")+
   theme_light() +
   theme(
     panel.background = element_rect(fill = "black"),
     panel.grid = element_blank(),
     axis.text.x = element_text(angle = 90)
+  )  +
+   annotate(
+    "curve", 
+    x = "2024-05", y = -20, 
+    xend = "2024-02", yend = -24,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = 0.3,
+    color = "red"
+  ) + 
+   annotate(
+    "curve", 
+    x = "2024-06",  y = 15, 
+    xend = "2024-03", yend = 24 ,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = -0.3,
+    color = "#00BFFF"
   ) +
   labs(x="",
        y="",
        title = "Variação da produção industrial em relação ao mês anterior",
        subtitle = "Estado: Rio Grande do Sul",
-       caption = "Fonte: IBGE. Elaboração própria")
+       caption = "Fonte: IBGE. Elaboração: Vice-Presidência da República")
+
+```
+
+```{r}
+
+
+grafico_com_gradacao_de_cores<-
+dados_grafico %>%
+  ggplot(aes(x=posicao, y=valor)) +
+  geom_col(aes(fill= valor), show.legend = FALSE) +
+  geom_text(aes(label = paste0(valor,"%"), color  = sinal), vjust = vjust_grafico, size= 3, show.legend = FALSE) +
+  geom_text(aes(label = "Enchentes no Rio Grande do Sul", x="2024-04", y=-26), hjust=1.1, color = "red") +
+  geom_text(aes(label = "Recuperação da indústria", x="2024-05", y=26), hjust=1.1, color = "blue") +
+  scale_fill_continuous_divergingx(palette = "RdBu")+
+  theme_light() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 90)
+  ) +
+   annotate(
+    "curve", 
+    x = "2024-05", y = -20, 
+    xend = "2024-02", yend = -24,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = 0.3,
+    color = "red"
+  ) + 
+   annotate(
+    "curve", 
+    x = "2024-06",  y = 15, 
+    xend = "2024-03", yend = 24 ,
+    arrow = arrow(length = unit(0.5, "cm")), 
+    curvature = -0.3,
+    color = "blue"
+  ) + 
+  labs(x="",
+       y="",
+       title = "Variação da produção industrial em relação ao mês anterior",
+       subtitle = "Estado: Rio Grande do Sul",
+       caption = "Fonte: IBGE. Elaboração: Vice-Presidência da República")
+
+grafico_com_gradacao_de_cores
+
+ggsave("grafico_com_gradacao_de_cores.pdf", plot = grafico_com_gradacao_de_cores, device = "pdf", width = 10, height = 6, dpi = 300)
+ggsave("grafico_com_gradacao_de_cores.png", plot = grafico_com_gradacao_de_cores, device = "png", width = 10, height = 6, dpi = 300)
 
 ```
 
